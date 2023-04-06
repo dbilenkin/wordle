@@ -6,7 +6,10 @@ body {
 
 .header {
     margin-left: 10px;
-    margin-bottom: 10px;
+}
+
+.header h1 {
+    margin-bottom: 0px;
 }
 
 #wonMessage {
@@ -30,7 +33,7 @@ body {
 }
 
 .key {
-    width: 33px;
+    width: 30px;
     height: 40px;
     margin: 2px;
     background-color: #777;
