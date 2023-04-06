@@ -48,11 +48,7 @@ body {
 .keyboard {
     display: flex;
     flex-wrap: wrap;
-    margin-left: 10px
-}
-
-#keyboard1 {
-    margin-left: 28px;
+    justify-content: center;
 }
 
 #enter {
@@ -91,7 +87,8 @@ body {
 #guesses {
     display: flex;
     flex-direction: column;
-    margin: 28px
+    margin: 28px;
+    margin-top: 15px;
 }
 
 .guess {
