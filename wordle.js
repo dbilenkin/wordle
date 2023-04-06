@@ -81,7 +81,7 @@ function findMatches() {
 
     if (lettersGuessed === 5) {
         const guesses = currentGuess + 1;
-        $("#wonMessage").text("You won in " + guesses);
+        $("#wonMessage").text("You won! :)");
     } else if (currentGuess === 5) {
         $("#wonMessage").text("You lost :(");
     } else {
