@@ -2,19 +2,22 @@
 let currentGuess = 0;
 let currentLetter = 0;
 let word;
+let wordList;
+let allWordList;
+
+const numLetters = 5;
 const alphabet = "QWERTYUIOPASDFGHJKLZXCVBNM".split("");
 
 function getWord() {
-    const index = Math.floor(Math.random() * words.length);
-    word = words[index].toLocaleUpperCase();
-    // word = "GUESS";
+    const index = Math.floor(Math.random() * wordList.length);
+    word = wordList[index].toLocaleUpperCase();
 }
 
 function init() {
     const guessesDiv = $("#guesses");
     for (let i = 0; i < 6; i++) {
         const guessDiv = $(`<div class="guess" id="guess${i + 1}"></div>`);
-        for (let j = 0; j < 5; j++) {
+        for (let j = 0; j < numLetters; j++) {
             const letterDiv = $(`<div class="letter" id="letter${i}${j}"></div>`);
             guessDiv.append(letterDiv);
         }
@@ -42,13 +45,20 @@ function init() {
     const letterDiv = $(`#letter${currentGuess}${currentLetter}`);
     letterDiv.addClass("selected");
 
+    const fourLetterWords = words20k.filter(word => word.length === 4);
+    console.log(fourLetterWords);
+    console.log(fourLetterWords.length);
+
+    wordList = numLetters === 4 ? fourLetterWords : words;
+    allWordList = numLetters === 4 ? allFourLetterWords : allWords;
+
     getWord();
 }
 
 init();
 
 function clearGuess() {
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < numLetters; i++) {
         const letterDiv = $(`#letter${currentGuess}${i}`);
         letterDiv.text("");
         letterDiv.removeClass("entered");
@@ -59,27 +69,41 @@ function clearGuess() {
 
 function findMatches() {
     let lettersGuessed = 0;
-    for (let i = 0; i < 5; i++) {
+    let wordClone = word.slice(0);
+    for (let i = 0; i < numLetters; i++) { //go through first to get exact matches
         const letter = $(`#letter${currentGuess}${i}`);
         const letterVal = letter.text();
-        letterIndex = word.indexOf(letterVal);
-        if (word[i] === letterVal) { //exact match
-            console.log("exact match", letterVal);
+        letterIndex = wordClone.indexOf(letterVal);
+        if (wordClone[i] === letterVal) { //exact match
+            // console.log("exact match", letterVal);
             letter.addClass("exactMatch");
             lettersGuessed++
             $(`#${letterVal}`).addClass("exactMatch");
-        } else if (letterIndex !== -1) { //partial match
-            console.log("partial match", letterVal);
+            wordClone = wordClone.substring(0, i) + "*" + wordClone.substring(i+1); //to avoid multiple partial matches
+        }  
+    }
+
+    for (let i = 0; i < numLetters; i++) { //then go through for partials to fix multiple partial bug
+        const letter = $(`#letter${currentGuess}${i}`);
+        const letterVal = letter.text();
+        letterIndex = wordClone.indexOf(letterVal);
+        if (letterIndex !== -1) { //partial match
+            // console.log("partial match", letterVal);
             letter.addClass("partialMatch");
             $(`#${letterVal}`).addClass("partialMatch");
+            wordClone = wordClone.substring(0, letterIndex) + "*" + wordClone.substring(letterIndex + 1); //to avoid multiple partial matches
         } else {
-            console.log("no match", letterVal);
+            // console.log("no match", letterVal);
             $(`#${letterVal}`).addClass("guessed");
-
+    
         }
     }
 
-    if (lettersGuessed === 5) {
+
+
+
+
+    if (lettersGuessed === numLetters) {
         const guesses = currentGuess + 1;
         $("#wonMessage").text("You won! :)");
     } else if (currentGuess === 5) {
@@ -95,13 +119,13 @@ function findMatches() {
 function checkGuess() {
 
     let guessWord = "";
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < numLetters; i++) {
         guessWord += $(`#letter${currentGuess}${i}`).text();
     }
 
     const guessLower = guessWord.toLocaleLowerCase();
 
-    if (!words.includes(guessLower) && !allWords.includes(guessLower)) {
+    if (!wordList.includes(guessLower) && !allWordList.includes(guessLower)) {
         clearGuess();
     } else {
         findMatches();
@@ -128,7 +152,7 @@ function enterLetter(key) {
     letterDiv.addClass("entered");
 
     currentLetter++;
-    if (currentLetter < 5) {
+    if (currentLetter < numLetters) {
         const nextLetterDiv = $(`#letter${currentGuess}${currentLetter}`);
         nextLetterDiv.addClass("selected");
     }
@@ -141,7 +165,7 @@ $(".key").click(e => {
         deleteLetter();
     } else if (key === "enter") {
         checkGuess();
-    } else if (currentLetter < 5) {
+    } else if (currentLetter < numLetters) {
         enterLetter(key);
     }
 
@@ -151,10 +175,10 @@ $(".content").keyup(e => {
     e.preventDefault();
     console.log(e.which);
     if (e.which == 8) {
-       deleteLetter();
+        deleteLetter();
     } else if (e.which === 13) {
         checkGuess();
-    } else if (currentLetter < 5) {
+    } else if (currentLetter < numLetters) {
         const key = String.fromCharCode(e.which).toLocaleUpperCase();
         if (alphabet.includes(key)) {
             enterLetter(key);

@@ -5,15 +5,19 @@ body {
 }
 
 .header {
-    margin-left: 10px;
+    display: flex;
+    justify-content: center;
 }
 
 .header h1 {
     margin-bottom: 0px;
+    display: flex;
+    justify-content: space-between;
 }
 
 #wonMessage {
     margin-left: 75px;
+    width: 175px;
 }
 
 .hints {
@@ -93,6 +97,7 @@ body {
 
 .guess {
     display: flex;
+    justify-content: center;
 }
 
 
